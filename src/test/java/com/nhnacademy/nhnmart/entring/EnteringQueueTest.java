@@ -24,6 +24,7 @@ class EnteringQueueTest {
     @BeforeEach
     void setUp() {
         enteringQueue = new EnteringQueue();
+        enteringQueue.ad
 
         /*TODO#3-9
             Customer{id=1, name='NHN아카데미1', money=1000000}
