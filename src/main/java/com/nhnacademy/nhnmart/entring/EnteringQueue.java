@@ -28,7 +28,6 @@ public class EnteringQueue {
 
     //queue를 이용해서 mart 입장 대기열을 구현 합니다.
     private final Queue<Customer> queue;
-    int length =0;
 
     //기본 대기열 QueueSize = 100명
     private static final int DEFAULT_CAPACITY = 100;
@@ -47,10 +46,6 @@ public class EnteringQueue {
         //capacity 와 queue를 초기화 합니다.
         this.capacity = capacity;
         queue = new LinkedList<>();
-    }
-    public int getCapacity(){
-        length = capacity;
-        return length;
     }
 
 

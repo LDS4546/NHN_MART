@@ -37,14 +37,14 @@ public class CustomerGenerator implements Runnable {
 
     public CustomerGenerator(EnteringQueue enteringQueue) {
         //TODO#4-1 enteringQueue null 이면 'IllegalArgumentException' 발생하는지 검증 합니다.
-        if(enteringQueue == null){
+        if(Objects.isNull(enteringQueue)){
             throw new IllegalArgumentException();
         }
 
 
         //TODO#4-2 enteringQueue, atomicId 를 0으로 초기화 합니다.
         this.enteringQueue = enteringQueue;
-        atomicId = new AtomicLong();
+        atomicId = new AtomicLong(0);
 
     }
 
@@ -55,15 +55,18 @@ public class CustomerGenerator implements Runnable {
             - while 조건을 수정하세요.
             - 1초 간격으로 회원을 entringQueue의 대기열에 등록 합니다.
         */
-        while (enteringQueue.getQueueSize() < enteringQueue.getCapacity()){
-            Customer customer = generate();
+        while (!Thread.currentThread().isInterrupted()){
+
             //1초 간격으로 회원을 entringQueue의 대기열에 등록 합니다.
             try {
                 Thread.sleep(1000);
-                log.debug("{}, {}", customer.getName(), customer.getId());
+                Customer customer = generate();
+
+
                 enteringQueue.addCustomer(customer);
+                log.debug("{}, {}", customer.getName(), customer.getId());
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
             }
 
         }
@@ -84,20 +87,3 @@ public class CustomerGenerator implements Runnable {
 }
 
 
-class Test{
-    public static void main(String[] args) {
-        Fairy fairy = Fairy.create();
-        AtomicLong al = new AtomicLong();
-
-        System.out.println(al.get());
-        for(int i=0; i<10; i++){
-            System.out.println(al.incrementAndGet());
-            System.out.println("al:"+al.get());
-        }
-        System.out.println(al.get());
-        System.out.println(al.get());
-        System.out.println(al.get());
-        System.out.println(al.get());
-
-    }
-}

@@ -60,6 +60,7 @@ class CustomerGeneratorTest {
 
 
         //TODO#4-10 customerGeneratorThread를 종료 합니다.
+        customerGeneratorThread.interrupt();
 
         while(customerGeneratorThread.isAlive()){
             Thread.yield();
@@ -71,8 +72,6 @@ class CustomerGeneratorTest {
         Assertions.assertAll(
             ()->{
                 //TODO#4-11 interrupt발생시 customerGeneratorThread 의 상태가  TERMINATED 상태인지 검증
-                customerGeneratorThread.interrupt();
-
                 Assertions.assertEquals(Thread.State.TERMINATED,customerGeneratorThread.getState());
 
             },
