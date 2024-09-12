@@ -13,6 +13,7 @@
 package com.nhnacademy.customer.generator;
 
 import com.nhnacademy.nhnmart.entring.EnteringQueue;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,7 @@ import java.lang.reflect.Constructor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 class CustomerGeneratorTest {
     CustomerGenerator customerGenerator;
     EnteringQueue enteringQueue;
@@ -39,7 +41,9 @@ class CustomerGeneratorTest {
     @DisplayName("enteringQueue is null")
     void constructorTest(){
         //TODO#4-7 enteringQueue == null 이면 IllegalArgumentException 발생 하는지 검증 합니다.
-        Assertions.assertThrows();
+        Assertions.assertThrows(IllegalArgumentException.class, ()->{
+            new CustomerGenerator(null);
+        });
 
     }
 
@@ -48,13 +52,14 @@ class CustomerGeneratorTest {
     void generatorTest() throws InterruptedException {
 
         //TODO#4-8 customerGenerator를 이용해서 customerGeneratorThread 초기화 하고, 실행 합니다.
-        Thread customerGeneratorThread = null;
+        Thread customerGeneratorThread = new Thread(customerGenerator);
+        customerGeneratorThread.start();
 
         //TODO#4-9 10초 대기 합니다.
+        Thread.sleep(10000);
 
 
         //TODO#4-10 customerGeneratorThread를 종료 합니다.
-
 
         while(customerGeneratorThread.isAlive()){
             Thread.yield();
@@ -66,9 +71,14 @@ class CustomerGeneratorTest {
         Assertions.assertAll(
             ()->{
                 //TODO#4-11 interrupt발생시 customerGeneratorThread 의 상태가  TERMINATED 상태인지 검증
+                customerGeneratorThread.interrupt();
+
+                Assertions.assertEquals(Thread.State.TERMINATED,customerGeneratorThread.getState());
+
             },
             ()->{
                 //TODO#4-12 enteringQueue(대기열) 최대 Queue Size가 5 <-- 10초 동안 최대 5명의 고객이 대기열에 등록되었는지 검증 합니다.
+                Assertions.assertEquals(5, enteringQueue.getQueueSize());
             }
         );
     }

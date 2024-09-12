@@ -55,16 +55,17 @@ public class CustomerGenerator implements Runnable {
             - while 조건을 수정하세요.
             - 1초 간격으로 회원을 entringQueue의 대기열에 등록 합니다.
         */
-
-        Customer customer = generate();
-        while (enteringQueue.getQueueSize() >= atomicId.get()){
+        while (enteringQueue.getQueueSize() < enteringQueue.getCapacity()){
+            Customer customer = generate();
             //1초 간격으로 회원을 entringQueue의 대기열에 등록 합니다.
             try {
                 Thread.sleep(1000);
+                log.debug("{}, {}", customer.getName(), customer.getId());
+                enteringQueue.addCustomer(customer);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            enteringQueue.addCustomer(customer);
+
         }
     }
 
@@ -78,9 +79,7 @@ public class CustomerGenerator implements Runnable {
         Fairy fairy = Fairy.create();
         Person person = fairy.person();
 
-
-        Customer customer = new Customer(atomicId.incrementAndGet(), person.getFullName(), DEFAULT_MONEY);
-        return customer;
+        return new Customer(atomicId.incrementAndGet(), person.getFullName(), DEFAULT_MONEY);
     }
 }
 
