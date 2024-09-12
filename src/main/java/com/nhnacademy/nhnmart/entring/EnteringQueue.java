@@ -80,6 +80,7 @@ public class EnteringQueue {
         //queue 에서 customer를 반납 합니다, 대기하고 있던 thread를 깨웁니다.
         notifyAll();
         return queue.poll();
+
     }
 
     //queue size를 반환 합니다.

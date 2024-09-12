@@ -29,16 +29,17 @@ class CustomerGeneratorTest {
     @BeforeEach
     void setUp() {
         //TODO#4-5 enteringQueue 대기열을 capacity = 5로 초기화 합니다.
-        enteringQueue = null;
+        enteringQueue = new EnteringQueue(5);
 
         //TODO#4-6 enteringQueue를 이용 해서 customerGeneratorr 객체를 생성 합니다.
-        customerGenerator = null;
+        customerGenerator = new CustomerGenerator(enteringQueue);
     }
 
     @Test
     @DisplayName("enteringQueue is null")
     void constructorTest(){
         //TODO#4-7 enteringQueue == null 이면 IllegalArgumentException 발생 하는지 검증 합니다.
+        Assertions.assertThrows();
 
     }
 
