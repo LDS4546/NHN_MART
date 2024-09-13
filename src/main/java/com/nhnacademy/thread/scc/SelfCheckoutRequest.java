@@ -32,12 +32,14 @@ public class SelfCheckoutRequest implements Executable {
 
     public SelfCheckoutRequest(Customer customer, Cart cart, ProductService productService) {
         //TODO#9-2-1 customer, cart, productService null 이면 IllegalArgumentException 발생
-
+        if(customer == null || cart == null || productService == null){
+            throw new IllegalArgumentException();
+        }
 
         //TODO#9-2-2 customer, cart, productService 초기화
-        this.customer = null;
-        this.cart = null;
-        this.productService = null;
+        this.customer = customer;
+        this.cart = cart;
+        this.productService = productService;
     }
 
     @Override
@@ -52,7 +54,23 @@ public class SelfCheckoutRequest implements Executable {
 
 
         try {
-            //1초 단위로 결제를 진행 합니다.
+            int amount = getTotalAmountFromCart();
+            customer.pay(amount);
+        } catch (InsufficientFundsException insufficientFundsException) {
+            // 결제 fail, 장바구니에 있는 모든 물건들을  다시 회수 합니다.
+
+            for (CartItem cartItem : cart.getCartItems()) {
+                productService.returnProduct(cartItem.getProductId(), cartItem.getQuantity());
+            }
+
+        } catch (Exception e){
+            if(e instanceof InterruptedException){
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        //1초 단위로 결제를 진행 합니다.
+        try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -65,7 +83,8 @@ public class SelfCheckoutRequest implements Executable {
         int totalPrice = 0;
 
         for(CartItem cartItem : cart.getCartItems()){
-
+            Product product = productService.getProduct(cartItem.getProductId());
+            totalPrice += product.getPrice() * cartItem.getQuantity();
         }
         return totalPrice;
     }

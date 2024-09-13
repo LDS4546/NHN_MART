@@ -22,12 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Any;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -59,10 +61,18 @@ class CustomerShoppingHandlerTest {
         //EnteringQueue enteringQueue, ProductService productService, RequestChannel checkoutChannel null check
 
         //TODO#9-1-11 CustomerShoppingHandler객체가 생성될 때 parameter의 null 여부를 검증하는 코드를 작성하세요
-        //-enteringQueue, productService, checkoutChannel
+
 
         Assertions.assertAll(
-
+                ()->Assertions.assertThrows(IllegalArgumentException.class, ()->{
+                    CustomerShoppingHandler customerShoppingHandler = new CustomerShoppingHandler(null, productService, checkoutChannel);
+                }),
+                ()->Assertions.assertThrows(IllegalArgumentException.class, ()->{
+                    CustomerShoppingHandler customerShoppingHandler = new CustomerShoppingHandler(enteringQueue, null, checkoutChannel);
+                }),
+                ()->Assertions.assertThrows(IllegalArgumentException.class, ()->{
+                    CustomerShoppingHandler customerShoppingHandler = new CustomerShoppingHandler(enteringQueue, productService, null);
+                })
         );
     }
 
@@ -84,6 +94,7 @@ class CustomerShoppingHandlerTest {
 
         //TODO#9-1-12 Mokito.verify()를 이용해서 checkoutChannel.addRequest() 1회 호출되었는지 검증 합니다.
         //checkoutChannel.addRequest() 호출해서 결제 대기열에 등록합니다.
+        Mockito.verify(checkoutChannel, Mockito.times(1)).addRequest(any());
 
     }
 
@@ -106,6 +117,7 @@ class CustomerShoppingHandlerTest {
         log.debug("{actual:{}}",actual);
 
         //TODO#9-1-13 1<= actual <= 5 검증 합니다.
+        Assertions.assertTrue(actual >= 1 && actual <= 5);
 
     }
 
@@ -125,6 +137,7 @@ class CustomerShoppingHandlerTest {
         log.debug("{actual:{}}",actual);
 
         //TODO#9-1-14 1<= actual <= 10 검증 합니다.
+        Assertions.assertTrue(actual >= 1 && actual <= 10);
 
     }
 
@@ -148,7 +161,7 @@ class CustomerShoppingHandlerTest {
         log.debug("totalCount:{}, actual:{}",totalCount, actual);
 
         //TODO#9-1-15 actual < = totalCount 인지 검증 합니다.
-
+        Assertions.assertTrue(actual <= totalCount);
     }
 
 }

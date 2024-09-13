@@ -107,6 +107,7 @@ public class CustomerShoppingTest {
         //TODO#9-1-16 카트에 담긴 제품 수 - CartLocal.getCart().getCartItems().size() > 0 검증 합니다.
         Assertions.assertTrue(CartLocal.getCart().getCartItems().size()>0);
 
+
         //제품을 들어서 카트에 담는다. -> 즉 제품의 수량 감소
         Mockito.verify(productService,Mockito.atLeast(1)).pickProduct(anyLong(),anyInt());
 
