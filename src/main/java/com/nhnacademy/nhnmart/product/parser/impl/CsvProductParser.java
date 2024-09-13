@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,12 @@ public class CsvProductParser implements ProductParser {
 
     public CsvProductParser() {
         //TODO#6-2-1 기본생성자 구현 , getProductsStream()을 이용해서 inputStream을 초기화 합니다.
-        inputStream = null;
+        inputStream = getProductsStream();
     }
 
     public CsvProductParser(InputStream inputStream){
         //TODO#6-2-2 inputStream prameter로 전달 됩니다. 초기화 합니다.
-        this.inputStream = null;
+        this.inputStream = inputStream;
     }
 
     @Override
@@ -54,6 +55,26 @@ public class CsvProductParser implements ProductParser {
             - ProductParser interface의 getProductsStream()를 이용해서 구현 합니다.
          */
         List<Product> products = new ArrayList<>();
+        try(InputStreamReader reader = new InputStreamReader(inputStream);
+            CSVParser csvParser = new CSVParser(reader, CSVFormat.EXCEL)){
+            List<CSVRecord> csvRecordList = csvParser.getRecords();
+            for(int i=1; i<csvRecordList.size(); i++){
+                CSVRecord csvRecord = csvRecordList.get(i);
+                String item = csvRecord.get(0);
+                String maker = csvRecord.get(1);
+                String specification = csvRecord.get(2);
+                String unit = csvRecord.get(3);
+
+                String[] s = csvRecord.get(4).split(",");
+                String str = s[0] + s[1];
+
+                int price = Integer.parseInt(str);
+            }
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
         return products;
@@ -62,6 +83,10 @@ public class CsvProductParser implements ProductParser {
     @Override
     public void close() throws IOException {
         //TODO#6-2-5 inputStream 객체가 존재하면 close() method를 호출해서 자원을 해지 합니다.
+        if(inputStream != null){
+
+            inputStream.close();
+        }
         
     }
 }
