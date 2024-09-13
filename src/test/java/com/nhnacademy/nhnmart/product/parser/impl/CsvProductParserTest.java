@@ -53,8 +53,8 @@ class CsvProductParserTest {
     void constructorTest2(){
         //TODO#6-2-8  CsvProductParser 객체를 생성시 inputstream == null 이면 IllegalArgumentException이 발생하는지 검증 합니다.
         Assertions.assertThrows(IllegalArgumentException.class, ()->{
-
-        })
+        productParser = new CsvProductParser(null);
+        });
     }
 
     @Test
@@ -83,6 +83,10 @@ class CsvProductParserTest {
         }
 
         //TODO#6-2-9 actual 과 excepted 일치 하는지 검증 합니다.
+        for(int i=0; i< actual.size(); i++){
+            Assertions.assertEquals(excepted.get(i), actual.get(i));
+        }
+
 
     }
 }

@@ -132,6 +132,9 @@ class ProductTest {
     @Order(10)
     void setQuantity() {
         //TODO#6-1-13 product의 quantity를 50으로 변경하고, 검증 합니다.
+        product.setQuantity(50);
+
+        Assertions.assertEquals(50, product.getQuantity());
 
     }
 
@@ -140,5 +143,9 @@ class ProductTest {
     void setQuantity_negativeParam(){
         //TODO#6-1-14 product의 quantity를 -1으로 변경하고, IllegalArgumentException 발생하는지 검증 합니다.
 
+
+        Assertions.assertThrows(IllegalArgumentException.class, ()->{
+            product.setQuantity(-1);
+        });
     }
 }

@@ -12,6 +12,7 @@
 
 package com.nhnacademy.nhnmart.product.parser.impl;
 
+import com.nhnacademy.nhnmart.product.domain.Product;
 import com.nhnacademy.nhnmart.product.exception.CsvParsingException;
 import com.nhnacademy.nhnmart.product.parser.ProductParser;
 import org.junit.jupiter.api.Assertions;
@@ -20,8 +21,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class CsvProductParserFailTest {
+
 
     @Test
     @DisplayName("product_data_fail.csv price {int->bigint} 변경")
@@ -38,6 +41,17 @@ public class CsvProductParserFailTest {
                         .getResourceAsStream(PRODUCTS_DATA);
             }
         */
+
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("product_data_fail.csv");
+
+        ProductParser productParser = new CsvProductParser(inputStream);
+
+
+
+        Assertions.assertThrows(CsvParsingException.class, ()->{
+            List<Product> actual = productParser.parse();
+        });
+
 
     }
 }

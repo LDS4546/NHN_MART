@@ -44,6 +44,9 @@ public class CsvProductParser implements ProductParser {
 
     public CsvProductParser(InputStream inputStream){
         //TODO#6-2-2 inputStream prameter로 전달 됩니다. 초기화 합니다.
+        if(inputStream == null){
+            throw new IllegalArgumentException();
+        }
         this.inputStream = inputStream;
     }
 
@@ -69,11 +72,13 @@ public class CsvProductParser implements ProductParser {
                 String str = s[0] + s[1];
 
                 int price = Integer.parseInt(str);
+                Product product = new Product(i, item, maker, specification, unit, price, 100);
+                products.add(product);
             }
 
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new CsvParsingException();
         }
 
 
