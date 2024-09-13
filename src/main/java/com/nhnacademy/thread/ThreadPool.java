@@ -35,19 +35,26 @@ public class ThreadPool {
 
     public ThreadPool(Runnable runnable){
         //TODO#8-1-1 default 생성자 구현, poolSize = DEFAULT_POOL_SIZE를 사용합니다.
-        this.poolSize=0;
-        this.runnable = null;
-        this.threadList = null;
+        this.poolSize=DEFAULT_POOL_SIZE;
+        this.runnable = runnable;
+        this.threadList = new ArrayList<>(poolSize);
     }
 
     public ThreadPool(int poolSize, Runnable runnable) {
         //TODO#8-1-2 thread pool size <0 다면 IllegalArgumentException이 발생 합니다.
-
+        if(poolSize < 0){
+            throw new IllegalArgumentException();
+        }
 
         //TODO#8-1-3 runable == null 이면 IllegalArgumentException 발생 합니다.
-
+        if(runnable == null){
+            throw new IllegalArgumentException();
+        }
 
         //TODO#8-1-4 runnable 이 Runnable의 구현체가 아니라면 IllegalArgumentException 발생 합니다.
+        if (!(runnable instanceof Runnable)) {
+            throw new IllegalArgumentException();
+        }
 
 
         //TODO#8-1-5 poolSize, runnable, threadList 초기화
@@ -59,7 +66,7 @@ public class ThreadPool {
         createThread();
     }
 
-    private void createThread(){
+    private synchronized void createThread(){
         for(int i=0; i<poolSize; i++){
             threadList.add(new Thread(runnable));
         }
@@ -72,6 +79,8 @@ public class ThreadPool {
         * */
         for(int i=0; i<poolSize; i++){
             //구현
+            Thread thread =threadList.get(i);
+            thread.start();
         }
     }
 
@@ -83,11 +92,20 @@ public class ThreadPool {
 
         for(Thread thread : threadList){
             //구현
+            if(Objects.nonNull(thread) && thread.isAlive() ){
+                thread.interrupt();
+            }
         }
 
         //TODO#8-1-8 join()를 이용해서 모든 thread가 종료될 떄 까지 대기 상태로 만듭니다.
         for(Thread thread : threadList){
             //궈현
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.debug("{}",e.getMessage(),e);
+            }
         }
     }
 }
